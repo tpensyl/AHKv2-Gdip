@@ -1,4 +1,4 @@
-#include Gdib_All.ahk
+#include Gdip_All.ahk
 
 ; Draws colored rectangle (with optional transparency)
 ; Use `returnValue.Destroy()` to destroy the rectangle (AHK Gui object)
@@ -43,6 +43,8 @@ _shouldPixelColorBufferedWait := true
 
 ; Gets pixel color using screen buffer which refreshes on specified period (_PixelColorBufferedRefreshPeriod)
 GetPixelColorBuffered(x,y) {
+	global _PixelColorBufferedRefreshPeriod
+	
 	static nextUpdateTick := 0
 
 	if (A_TickCount > nextUpdateTick) {
