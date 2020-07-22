@@ -1,5 +1,5 @@
 # AHKv2-Gdip
-This repository contains the GDI+ library (Gdip_All.ahk) compatible with the current [AutoHotKey v2](https://autohotkey.com/v2/)
+This repository contains the GDI+ library (Gdip_All.ahk) compatible with the current [AutoHotKey v2](https://autohotkey.com/v2/) build a118.
 
 Support for AHK v1.0 is dropped (find the original `Gdip_All.ahk` library if you need it).  
 
