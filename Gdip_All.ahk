@@ -1602,7 +1602,8 @@ Gdip_SaveBitmapToFile(pBitmap, sOutput, Quality:=75)
 
 	Loop nCount
 	{
-		sString := StrGet(NumGet(ci, (idx := (48+7*A_PtrSize)*(A_Index-1))+32+3*A_PtrSize), "UTF-16")
+		address := NumGet(ci, (idx := (48+7*A_PtrSize)*(A_Index-1))+32+3*A_PtrSize, "UPtr")
+		sString := StrGet(address, "UTF-16")
 		if !InStr(sString, "*" Extension)
 			continue
 
