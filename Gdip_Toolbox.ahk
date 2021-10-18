@@ -2,9 +2,42 @@
 
 ; Draws colored rectangle (with optional transparency)
 ; Use `returnValue.Destroy()` to destroy the rectangle (AHK Gui object)
+FreezePicture() {
+	pToken := Gdip_Startup()
+
+	if (!pToken) {
+		MsgBox "Gdiplus failed to start. Please ensure you have gdiplus on your system"
+		return
+	}
+
+
+	static raster := 0x40000000 + 0x00CC0020 ;to capture layered windows too
+
+    pBitmap := Gdip_BitmapFromScreen(0 "|" 0 "|" A_ScreenWidth "|" A_ScreenHeight, raster)
+
+	Gui1 := Gui("-Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs")
+	Gui1.Show("NA")
+	hwnd1 := WinExist()
+
+	hbm := Gdip_CreateHBITMAPFromBitmap(pBitmap)
+    Gdip_DisposeImage(pBitmap)
+	hdc := CreateCompatibleDC()
+	obm := SelectObject(hdc, hbm)
+	UpdateLayeredWindow(hwnd1, hdc, 0, 0, A_ScreenWidth, A_ScreenHeight)
+
+	SelectObject(hdc, obm)
+	DeleteObject(hbm)
+	DeleteDC(hdc)
+    Gdip_Shutdown(pToken)
+
+	return Gui1
+}
+
+; Draws colored rectangle (with optional transparency)
+; Use `returnValue.Destroy()` to destroy the rectangle (AHK Gui object)
 DrawRectangle(x1, y1, x2, y2, color, alpha:=1) {
-	static pToken := Gdip_Startup()
-	
+	pToken := Gdip_Startup()
+
 	if (!pToken) {
 		MsgBox "Gdiplus failed to start. Please ensure you have gdiplus on your system"
 		return
@@ -12,7 +45,7 @@ DrawRectangle(x1, y1, x2, y2, color, alpha:=1) {
 
 	w := x2 - x1 + 1
 	h := y2 - y1 + 1
-	Gui1 := Gui.New("-Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs")
+	Gui1 := Gui("-Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs")
 	Gui1.Show("NA")
 	hwnd1 := WinExist()
 
@@ -31,6 +64,7 @@ DrawRectangle(x1, y1, x2, y2, color, alpha:=1) {
 	DeleteObject(hbm)
 	DeleteDC(hdc)
 	Gdip_DeleteGraphics(G)
+    Gdip_Shutdown(pToken)
 
 	return Gui1
 }
@@ -44,7 +78,7 @@ _shouldPixelColorBufferedWait := true
 ; Gets pixel color using screen buffer which refreshes on specified period (_PixelColorBufferedRefreshPeriod)
 GetPixelColorBuffered(x,y) {
 	global _PixelColorBufferedRefreshPeriod
-	
+
 	static nextUpdateTick := 0
 
 	if (A_TickCount > nextUpdateTick) {
