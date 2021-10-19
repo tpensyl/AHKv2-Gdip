@@ -4,7 +4,7 @@
 ; Use `returnValue.Destroy()` to destroy the rectangle (AHK Gui object)
 FreezePicture() {
 	pToken := Gdip_Startup()
-
+	
 	if (!pToken) {
 		MsgBox "Gdiplus failed to start. Please ensure you have gdiplus on your system"
 		return
@@ -29,7 +29,7 @@ FreezePicture() {
 	DeleteObject(hbm)
 	DeleteDC(hdc)
     Gdip_Shutdown(pToken)
-
+	
 	return Gui1
 }
 
@@ -37,7 +37,7 @@ FreezePicture() {
 ; Use `returnValue.Destroy()` to destroy the rectangle (AHK Gui object)
 DrawRectangle(x1, y1, x2, y2, color, alpha:=1) {
 	pToken := Gdip_Startup()
-
+	
 	if (!pToken) {
 		MsgBox "Gdiplus failed to start. Please ensure you have gdiplus on your system"
 		return
@@ -78,7 +78,7 @@ _shouldPixelColorBufferedWait := true
 ; Gets pixel color using screen buffer which refreshes on specified period (_PixelColorBufferedRefreshPeriod)
 GetPixelColorBuffered(x,y) {
 	global _PixelColorBufferedRefreshPeriod
-
+	
 	static nextUpdateTick := 0
 
 	if (A_TickCount > nextUpdateTick) {
