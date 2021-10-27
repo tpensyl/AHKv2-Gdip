@@ -2517,6 +2517,9 @@ Gdip_Startup()
 	si := Buffer(A_PtrSize = 8 ? 24 : 16, 0)
 	NumPut("UInt", 1, si)
 	DllCall("gdiplus\GdiplusStartup", "UPtr*", &pToken:=0, "UPtr", si.Ptr, "UPtr", 0)
+	if (!pToken) {
+		throw Error("Gdiplus failed to start. Please ensure you have gdiplus on your system")
+	}
 
 	return pToken
 }

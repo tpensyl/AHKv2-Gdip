@@ -15,61 +15,73 @@ FreezePicture() {
 
     pBitmap := Gdip_BitmapFromScreen(0 "|" 0 "|" A_ScreenWidth "|" A_ScreenHeight, raster)
 
-	Gui1 := Gui("-Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs")
-	Gui1.Show("NA")
-	hwnd1 := WinExist()
+	myGui := Gui("-Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs")
+	myGui.Show("NA")
 
 	hbm := Gdip_CreateHBITMAPFromBitmap(pBitmap)
     Gdip_DisposeImage(pBitmap)
 	hdc := CreateCompatibleDC()
 	obm := SelectObject(hdc, hbm)
-	UpdateLayeredWindow(hwnd1, hdc, 0, 0, A_ScreenWidth, A_ScreenHeight)
+	UpdateLayeredWindow(myGui.hwnd, hdc, 0, 0, A_ScreenWidth, A_ScreenHeight)
 
 	SelectObject(hdc, obm)
 	DeleteObject(hbm)
 	DeleteDC(hdc)
     Gdip_Shutdown(pToken)
 	
-	return Gui1
+	return myGui
 }
 
 ; Draws colored rectangle (with optional transparency)
 ; Use `returnValue.Destroy()` to destroy the rectangle (AHK Gui object)
-DrawRectangle(x1, y1, x2, y2, color, alpha:=1) {
-	pToken := Gdip_Startup()
-	
-	if (!pToken) {
-		MsgBox "Gdiplus failed to start. Please ensure you have gdiplus on your system"
-		return
-	}
+DrawRectangleSlow(x1, y1, x2, y2, color, alpha:=1) {
+	global CoordText
 
 	w := x2 - x1 + 1
 	h := y2 - y1 + 1
-	Gui1 := Gui("-Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs")
-	Gui1.Show("NA")
-	hwnd1 := WinExist()
+	myGui := Gui("-Caption +E0x80000 +AlwaysOnTop +ToolWindow -DPIScale +LastFound +OwnDialogs")
+	myGui.BackColor := color
+	WinSetTransparent(round(255*alpha), myGui)
+	myGui.Show()
+	myGui.Move(x1, y1, w, h)
 
-	hbm := CreateDIBSection(w, h)
+	return myGui
+}
+
+; Draws colored rectangle (with optional transparency)
+; Use `returnValue.Destroy()` to destroy the rectangle (AHK Gui object)
+DrawRectangle(x1, y1, x2, y2, color, alpha:=1, parentWindow:="") {
+	pToken := Gdip_Startup()
+	
+	w := x2 - x1 + 1
+	h := y2 - y1 + 1
+	
+	if (!parentWindow) {
+		parentWindow := Gui("-Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs")
+		parentWindow.Show("NA")
+	}
+
 	hdc := CreateCompatibleDC()
+	hbm := CreateDIBSection(w, h)
 	obm := SelectObject(hdc, hbm)
 	G := Gdip_GraphicsFromHDC(hdc)
-	; Gdip_SetSmoothingMode(G, 4)
 	pBrush := Gdip_BrushCreateSolid((floor(alpha * 0xFF) << 24) | color)
 	Gdip_FillRectangle(G, pBrush, 0, 0, w, h)
 	Gdip_DeleteBrush(pBrush)
 
-	UpdateLayeredWindow(hwnd1, hdc, x1, y1, w, h)
-
+	UpdateLayeredWindow(parentWindow.hwnd, hdc, x1, y1, w, h)
 	SelectObject(hdc, obm)
+	
 	DeleteObject(hbm)
 	DeleteDC(hdc)
 	Gdip_DeleteGraphics(G)
-    Gdip_Shutdown(pToken)
 
-	return Gui1
+	Gdip_Shutdown(pToken)
+
+	return parentWindow
 }
 
-_PixelColorBufferedRefreshPeriod := 100
+_PixelColorBufferedRefreshPeriod := 150
 _PixelColorBufferedDC := 0
 _isPixelColorBufferedReady := false
 _shouldPixelColorBufferedWait := true
