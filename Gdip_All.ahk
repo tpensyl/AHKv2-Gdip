@@ -2269,7 +2269,7 @@ Gdip_TextToGraphics(pGraphics, Text, Options, Font:="Arial", Width:="", Height:=
 	Align := 0, Alignments := "Near|Left|Centre|Center|Far|Right"
 	for eachAlignment, valAlignment in StrSplit( Alignments, "|" ) {
 		if RegExMatch(Options, "\b" valAlignment) {
-			Align |= A_Index//2.1	; 0|0|1|1|2|2
+			Align |= A_Index*10//21	; 0|0|1|1|2|2
 		}
 	}
 
