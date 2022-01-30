@@ -1329,6 +1329,8 @@ Gdip_DrawImage(pGraphics, pBitmap, dx:="", dy:="", dw:="", dh:="", sx:="", sy:="
 		ImageAttr := Gdip_SetImageAttributesColorMatrix(Matrix)
 	else if (Matrix != 1)
 		ImageAttr := Gdip_SetImageAttributesColorMatrix("1|0|0|0|0|0|1|0|0|0|0|0|1|0|0|0|0|0|" Matrix "|0|0|0|0|0|1")
+	else
+		ImageAttr := 0
 
 	if (sx = "" && sy = "" && sw = "" && sh = "")
 	{
@@ -1358,7 +1360,7 @@ Gdip_DrawImage(pGraphics, pBitmap, dx:="", dy:="", dw:="", dh:="", sx:="", sy:="
 				, "Float", sw
 				, "Float", sh
 				, "Int", 2
-				, "UPtr", ImageAttr ? ImageAttr : 0
+				, "UPtr", ImageAttr
 				, "UPtr", 0
 				, "UPtr", 0)
 	if ImageAttr
