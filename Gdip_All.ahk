@@ -1,21 +1,4 @@
-; Gdip standard library v1.54 on 11/15/2017
-; Gdip standard library v1.53 on 6/19/2017
-; Gdip standard library v1.52 on 6/11/2017
-; Gdip standard library v1.51 on 1/27/2017
-; Gdip standard library v1.50 on 11/20/16
-; Gdip standard library v1.45 by tic (Tariq Porter) 07/09/11
-; Modifed by Rseding91 using fincs 64 bit compatible Gdip library 5/1/2013
-; Supports: Basic, _L ANSi, _L Unicode x86 and _L Unicode x64
-;
-; Updated 11/15/2017 - compatibility with both AHK v2 and v1, restored by nnnik
-; Updated 6/19/2017 - Fixed few bugs from old syntax by Bartlomiej Uliasz
-; Updated 6/11/2017 - made code compatible with new AHK v2.0-a079-be5df98 by Bartlomiej Uliasz
-; Updated 1/27/2017 - fixed some bugs and made #Warn All compatible by Bartlomiej Uliasz
-; Updated 11/20/2016 - fixed Gdip_BitmapFromBRA() by 'just me'
-; Updated 11/18/2016 - backward compatible support for both AHK v1.1 and AHK v2
-; Updated 11/15/2016 - initial AHK v2 support by guest3456
-; Updated 2/20/2014 - fixed Gdip_CreateRegion() and Gdip_GetClipRegion() on AHK Unicode x86
-; Updated 5/13/2013 - fixed Gdip_SetBitmapToClipboard() on AHK Unicode x64
+; v1.56
 ;
 ;#####################################################################################
 ;#####################################################################################
@@ -228,9 +211,9 @@ SetStretchBltMode(hdc, iStretchMode:=4)
 
 SetImage(hwnd, hBitmap)
 {
-	E := DllCall( "SendMessage", "UPtr", hwnd, "UInt", 0x172, "UInt", 0x0, "UPtr", hBitmap )
-	DeleteObject(E)
-	return E
+	_E := DllCall( "SendMessage", "UPtr", hwnd, "UInt", 0x172, "UInt", 0x0, "UPtr", hBitmap )
+	DeleteObject(_E)
+	return _E
 }
 
 ;#####################################################################################
@@ -318,15 +301,13 @@ SetSysColorToControl(hwnd, SysColor:=15)
 Gdip_BitmapFromScreen(Screen:=0, Raster:="")
 {
 	hhdc := 0
-	if (Screen = 0)
-	{
+	if (Screen = 0) {
 		_x := DllCall( "GetSystemMetrics", "Int", 76 )
 		_y := DllCall( "GetSystemMetrics", "Int", 77 )
 		_w := DllCall( "GetSystemMetrics", "Int", 78 )
 		_h := DllCall( "GetSystemMetrics", "Int", 79 )
 	}
-	else if (SubStr(Screen, 1, 5) = "hwnd:")
-	{
+	else if (SubStr(Screen, 1, 5) = "hwnd:") {
 		Screen := SubStr(Screen, 6)
 		if !WinExist("ahk_id " Screen) {
 			return -2
@@ -338,26 +319,32 @@ Gdip_BitmapFromScreen(Screen:=0, Raster:="")
 		_x := _y := 0
 		hhdc := GetDCEx(Screen, 3)
 	}
-	else if IsInteger(Screen)
-	{
+	else if IsInteger(Screen) {
 		M := GetMonitorInfo(Screen)
 		_x := M.Left, _y := M.Top, _w := M.Right-M.Left, _h := M.Bottom-M.Top
 	}
-	else
-	{
+	else {
 		S := StrSplit(Screen, "|")
 		_x := S[1], _y := S[2], _w := S[3], _h := S[4]
 	}
 
-	if (_x = "") || (_y = "") || (_w = "") || (_h = "")
+	if (_x = "") || (_y = "") || (_w = "") || (_h = "") {
 		return -1
+	}
 
-	chdc := CreateCompatibleDC(), hbm := CreateDIBSection(_w, _h, chdc), obm := SelectObject(chdc, hbm), hhdc := hhdc ? hhdc : GetDC()
+	chdc := CreateCompatibleDC()
+	hbm := CreateDIBSection(_w, _h, chdc)
+	obm := SelectObject(chdc, hbm)
+	hhdc := hhdc ? hhdc : GetDC()
 	BitBlt(chdc, 0, 0, _w, _h, hhdc, _x, _y, Raster)
 	ReleaseDC(hhdc)
 
 	pBitmap := Gdip_CreateBitmapFromHBITMAP(hbm)
-	SelectObject(chdc, obm), DeleteObject(hbm), DeleteDC(hhdc), DeleteDC(chdc)
+
+	SelectObject(chdc, obm)
+	DeleteObject(hbm)
+	DeleteDC(hhdc)
+	DeleteDC(chdc)
 	return pBitmap
 }
 
@@ -1039,17 +1026,23 @@ Gdip_DrawLine(pGraphics, pPen, x1, y1, x2, y2)
 ;
 ; return				status enumeration. 0 = success
 
-Gdip_DrawLines(pGraphics, pPen, Points)
+Gdip_DrawLines(pGraphics, pPen, points)
 {
-	Points := StrSplit(Points, "|")
-	PointsLength := Points.Length
-	PointF := Buffer(8*PointsLength)
-	for eachPoint, Point in Points
-	{
-		Coord := StrSplit(Point, ",")
-		NumPut("Float", Coord[1], PointF, 8*(A_Index-1)), NumPut("Float", Coord[2], PointF, (8*(A_Index-1))+4)
+	points := StrSplit(points, "|")
+	pointF := Buffer(8*points.Length)
+	pointsLength := 0
+	for point in points {
+		coords := StrSplit(point, ",")
+		if (coords.Length != 2) {
+			if (coords.Length > 0) {
+				MsgBox("Skipping wrong points " ToString(coords))
+			}
+			continue
+		}
+		NumPut("Float", coords[1], pointF, 8*(A_Index-1)), NumPut("Float", coords[2], pointF, (8*(A_Index-1))+4)
+		pointsLength += 1
 	}
-	return DllCall("gdiplus\GdipDrawLines", "UPtr", pGraphics, "UPtr", pPen, "UPtr", PointF.Ptr, "Int", PointsLength)
+	return DllCall("gdiplus\GdipDrawLines", "UPtr", pGraphics, "UPtr", pPen, "UPtr", pointF.Ptr, "Int", pointsLength)
 }
 
 ;#####################################################################################
