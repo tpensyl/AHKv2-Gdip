@@ -68,10 +68,7 @@ UpdateLayeredWindow(hwnd, hdc, x:="", y:="", w:="", h:="", Alpha:=255)
 
 	if (w = "") || (h = "")
 	{
-		CreateRect(&winRect:="", 0, 0, 0, 0) ;is 16 on both 32 and 64
-		DllCall( "GetWindowRect", "UPtr", hwnd, "UPtr", winRect.Ptr )
-		w := NumGet(winRect, 8, "UInt")  - NumGet(winRect, 0, "UInt")
-		h := NumGet(winRect, 12, "UInt") - NumGet(winRect, 4, "UInt")
+		WinGetRect(hwnd,,, &w, &h)
 	}
 
 	return DllCall("UpdateLayeredWindow"
@@ -268,10 +265,7 @@ SetImage(hwnd, hBitmap)
 
 SetSysColorToControl(hwnd, SysColor:=15)
 {
-	CreateRect(&winRect:="", 0, 0, 0, 0) ;is 16 on both 32 and 64
-	DllCall( "GetWindowRect", "UPtr", hwnd, "UPtr", winRect.Ptr )
-	w := NumGet(winRect, 8, "UInt")  - NumGet(winRect, 0, "UInt")
-	h := NumGet(winRect, 12, "UInt") - NumGet(winRect, 4, "UInt")
+	WinGetRect(hwnd,,, &w, &h)
 	bc := DllCall("GetSysColor", "Int", SysColor, "UInt")
 	pBrushClear := Gdip_BrushCreateSolid(0xff000000 | (bc >> 16 | bc & 0xff00 | (bc & 0xff) << 16))
 	pBitmap := Gdip_CreateBitmap(w, h), G := Gdip_GraphicsFromImage(pBitmap)
@@ -312,10 +306,7 @@ Gdip_BitmapFromScreen(Screen:=0, Raster:="")
 		if !WinExist("ahk_id " Screen) {
 			return -2
 		}
-		CreateRect(&winRect:="", 0, 0, 0, 0) ;is 16 on both 32 and 64
-		DllCall( "GetWindowRect", "UPtr", Screen, "UPtr", winRect.Ptr )
-		_w := NumGet(winRect, 8, "UInt")  - NumGet(winRect, 0, "UInt")
-		_h := NumGet(winRect, 12, "UInt") - NumGet(winRect, 4, "UInt")
+		WinGetRect(Screen,,, &_w, &_h)
 		_x := _y := 0
 		hhdc := GetDCEx(Screen, 3)
 	}
@@ -361,10 +352,7 @@ Gdip_BitmapFromScreen(Screen:=0, Raster:="")
 
 Gdip_BitmapFromHWND(hwnd)
 {
-	CreateRect(&winRect:="", 0, 0, 0, 0) ;is 16 on both 32 and 64
-	DllCall( "GetWindowRect", "UPtr", hwnd, "UPtr", winRect.Ptr )
-	Width := NumGet(winRect, 8, "UInt") - NumGet(winRect, 0, "UInt")
-	Height := NumGet(winRect, 12, "UInt") - NumGet(winRect, 4, "UInt")
+	WinGetRect(hwnd,,, &Width, &Height)
 	hbm := CreateDIBSection(Width, Height), hdc := CreateCompatibleDC(), obm := SelectObject(hdc, hbm)
 	PrintWindow(hwnd, hdc)
 	pBitmap := Gdip_CreateBitmapFromHBITMAP(hbm)
@@ -3012,4 +3000,17 @@ MDMF_GetInfo(HMON) {
 		      , Primary:   NumGet(MIEX, 36, "UInt")} ; contains a non-zero value for the primary monitor.
 	}
 	return False
+}
+
+
+; Based on WinGetClientPos by dd900 and Frosti - https://www.autohotkey.com/boards/viewtopic.php?t=484
+WinGetRect( hwnd, &x:="", &y:="", &w:="", &h:="" ) {
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	CreateRect(&winRect, 0, 0, 0, 0) ;is 16 on both 32 and 64
+	;VarSetCapacity( winRect, 16, 0 )	; Alternative of above two lines
+	DllCall( "GetWindowRect", Ptr, hwnd, Ptr, &winRect )
+	x := NumGet(winRect,  0, "UInt")
+	y := NumGet(winRect,  4, "UInt")
+	w := NumGet(winRect,  8, "UInt") - x
+	h := NumGet(winRect, 12, "UInt") - y
 }
