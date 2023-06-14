@@ -814,6 +814,75 @@ Gdip_BitmapFromBase64(&Base64)
 
 ;#####################################################################################
 
+; Function:				Gdip_EncodeBitmapTo64string
+; Description:			Encode a bitmap to a Base64 encoded string
+;
+; pBitmap				Pointer to a bitmap
+; sOutput				The name of the file that the bitmap will be saved to. Supported extensions are: .BMP,.DIB,.RLE,.JPG,.JPEG,.JPE,.JFIF,.GIF,.TIF,.TIFF,.PNG
+; Quality				if saving as jpg (.JPG,.JPEG,.JPE,.JFIF) then quality can be 1-100 with default at maximum quality
+;
+; return				if the function succeeds, the return value is a Base64 encoded string of the pBitmap
+
+Gdip_EncodeBitmapTo64string(pBitmap, extension := "png", quality := "") {
+
+    ; Fill a buffer with the available image codec info.
+    DllCall("gdiplus\GdipGetImageEncodersSize", "uint*", &count:=0, "uint*", &size:=0)
+    DllCall("gdiplus\GdipGetImageEncoders", "uint", count, "uint", size, "ptr", ci := Buffer(size))
+
+    ; struct ImageCodecInfo - http://www.jose.it-berater.org/gdiplus/reference/structures/imagecodecinfo.htm
+    loop {
+        if (A_Index > count)
+        throw Error("Could not find a matching encoder for the specified file format.")
+
+        idx := (48+7*A_PtrSize)*(A_Index-1)
+    } until InStr(StrGet(NumGet(ci, idx+32+3*A_PtrSize, "ptr"), "UTF-16"), extension) ; FilenameExtension
+
+    ; Get the pointer to the clsid of the matching encoder.
+    pCodec := ci.ptr + idx ; ClassID
+
+    ; JPEG default quality is 75. Otherwise set a quality value from [0-100].
+    if (quality ~= "^-?\d+$") and ("image/jpeg" = StrGet(NumGet(ci, idx+32+4*A_PtrSize, "ptr"), "UTF-16")) { ; MimeType
+        ; Use a separate buffer to store the quality as ValueTypeLong (4).
+        v := Buffer(4), NumPut("uint", quality, v)
+
+        ; struct EncoderParameter - http://www.jose.it-berater.org/gdiplus/reference/structures/encoderparameter.htm
+        ; enum ValueType - https://docs.microsoft.com/en-us/dotnet/api/system.drawing.imaging.encoderparametervaluetype
+        ; clsid Image Encoder Constants - http://www.jose.it-berater.org/gdiplus/reference/constants/gdipimageencoderconstants.htm
+        ep := Buffer(24+2*A_PtrSize)                  ; sizeof(EncoderParameter) = ptr + n*(28, 32)
+        NumPut(  "uptr",     1, ep,            0)  ; Count
+        DllCall("ole32\CLSIDFromString", "wstr", "{1D5BE4B5-FA4A-452D-9CDD-5DB35105E7EB}", "ptr", ep.ptr+A_PtrSize, "HRESULT")
+        NumPut(  "uint",     1, ep, 16+A_PtrSize)  ; Number of Values
+        NumPut(  "uint",     4, ep, 20+A_PtrSize)  ; Type
+        NumPut(   "ptr", v.ptr, ep, 24+A_PtrSize)  ; Value
+    }
+
+    ; Create a Stream.
+    DllCall("ole32\CreateStreamOnHGlobal", "ptr", 0, "int", True, "ptr*", &pStream:=0, "HRESULT")
+    DllCall("gdiplus\GdipSaveImageToStream", "ptr", pBitmap, "ptr", pStream, "ptr", pCodec, "ptr", IsSet(ep) ? ep : 0)
+
+    ; Get a pointer to binary data.
+    DllCall("ole32\GetHGlobalFromStream", "ptr", pStream, "ptr*", &hbin:=0, "HRESULT")
+    bin := DllCall("GlobalLock", "ptr", hbin, "ptr")
+    size := DllCall("GlobalSize", "uint", bin, "uptr")
+
+    ; Calculate the length of the base64 string.
+    flags := 0x40000001 ; CRYPT_STRING_NOCRLF | CRYPT_STRING_BASE64
+    length := 4 * Ceil(size/3) + 1 ; An extra byte of padding is required.
+    str := Buffer(length)
+
+    ; Using CryptBinaryToStringA saves about 2MB in memory.
+    DllCall("crypt32\CryptBinaryToStringA", "ptr", bin, "uint", size, "uint", flags, "ptr", str, "uint*", &length)
+
+    ; Release binary data and stream.
+    DllCall("GlobalUnlock", "ptr", hbin)
+    ObjRelease(pStream)
+    
+    ; Return encoded string length minus 1.
+    return StrGet(str, length, "CP0")
+}
+
+;#####################################################################################
+
 ; Function				Gdip_DrawRectangle
 ; Description			This function uses a pen to draw the outline of a rectangle into the Graphics of a bitmap
 ;
