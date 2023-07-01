@@ -2564,8 +2564,8 @@ Gdip_SetCompositingMode(pGraphics, CompositingMode:=0)
 
 Gdip_Startup()
 {
-	if !DllCall("GetModuleHandle", "str", "gdiplus", "UPtr") {
-		DllCall("LoadLibrary", "str", "gdiplus")
+	if (!DllCall("LoadLibrary", "str", "gdiplus", "UPtr")) {
+		throw Error("Could not load GDI+ library")
 	}
 
 	si := Buffer(A_PtrSize = 8 ? 24 : 16, 0)
@@ -2581,8 +2581,12 @@ Gdip_Startup()
 Gdip_Shutdown(pToken)
 {
 	DllCall("gdiplus\GdiplusShutdown", "UPtr", pToken)
-	if hModule := DllCall("GetModuleHandle", "str", "gdiplus", "UPtr") {
-		DllCall("FreeLibrary", "UPtr", hModule)
+	hModule := DllCall("GetModuleHandle", "str", "gdiplus", "UPtr")
+	if (!hModule) {
+		throw Error("GDI+ library was unloaded before shutdown")
+	}
+	if (!DllCall("FreeLibrary", "UPtr", hModule)) {
+		throw Error("Could not free GDI+ library")
 	}
 
 	return 0
