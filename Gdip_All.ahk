@@ -2293,7 +2293,10 @@ Gdip_DeleteMatrix(Matrix)
 
 Gdip_TextToGraphics(pGraphics, Text, Options, Font:="Arial", Width:="", Height:="", Measure:=0)
 {
-	IWidth := Width, IHeight:= Height
+	IWidth := Width
+	IHeight := Height
+	PassBrush := 0
+
 
 	pattern_opts := "i)"
 	RegExMatch(Options, pattern_opts "X([\-\d\.]+)(p*)", &xpos:="")
