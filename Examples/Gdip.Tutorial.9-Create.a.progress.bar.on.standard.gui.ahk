@@ -16,7 +16,7 @@ If !pToken := Gdip_Startup()
 	MsgBox "Gdiplus failed to start. Please ensure you have gdiplus on your system"
 	ExitApp
 }
-OnExit("ExitFunc")
+OnExit ExitFunc
 
 ; Before we start there are some design elements we must consider.
 ; We can either make the script faster. Creating the bitmap 1st and just write the new progress bar onto it every time and updating it on the gui
@@ -37,7 +37,7 @@ OnExit("ExitFunc")
 ;GoSub Slider
 ;Gui, 1: Show, AutoSize, Example 9 - gdi+ progress bar
 
-Gui1 := GuiCreate("-DPIScale")
+Gui1 := Gui("-DPIScale")
 Gui1.OnEvent("Close", "Gui_Close")
 SliderObj := Gui1.Add("Slider", "x10 y10 w400 Range0-100 vPercentage Tooltip", 50)
 SliderObj.OnEvent("Change", "Slider_Change")

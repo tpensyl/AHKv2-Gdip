@@ -16,13 +16,13 @@ If !pToken := Gdip_Startup()
    MsgBox "Gdiplus failed to start. Please ensure you have gdiplus on your system"
    ExitApp
 }
-OnExit("ExitFunc")
+OnExit ExitFunc
 
 ; Create a layered window that is always on top as usual and get a handle to the window
 ;AHK v1
 ;Gui, 1: -Caption +E0x80000 +LastFound +OwnDialogs +Owner +AlwaysOnTop
 ;Gui, 1: Show, NA
-Gui1 := GuiCreate("-Caption +E0x80000 +LastFound +OwnDialogs +Owner +AlwaysOnTop")
+Gui1 := Gui("-Caption +E0x80000 +LastFound +OwnDialogs +Owner +AlwaysOnTop")
 Gui1.Show("NA")
 hwnd1 := WinExist()
 

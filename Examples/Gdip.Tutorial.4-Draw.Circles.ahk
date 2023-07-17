@@ -16,7 +16,7 @@ If !pToken := Gdip_Startup()
 	MsgBox "Gdiplus failed to start. Please ensure you have gdiplus on your system"
 	ExitApp
 }
-OnExit("ExitFunc")
+OnExit ExitFunc
 
 ; Get the dimensions of the primary monitor
 ; these funcs are based off MDMF lib and are now included in the Gdip_All library 
@@ -33,7 +33,7 @@ WAHeight := M.WABottom-M.WATop
 ;AHK v1
 ;Gui, 1: -Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs
 ;Gui, 1: Show, NA
-Gui1 := GuiCreate("-Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs")
+Gui1 := Gui("-Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs")
 Gui1.Show("NA")
 
 ; Get a handle to this window we have created in order to update it later

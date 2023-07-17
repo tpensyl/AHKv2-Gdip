@@ -17,7 +17,7 @@ If !pToken := Gdip_Startup()
 }
 ; On exiting the program we will go to Exit subroutine to clean up any resources
 ; OnExit, Exit
-OnExit("AppExit")  ; Requires [v1.1.20+]
+OnExit AppExit
 
 ; I've added a simple new function here, just to ensure if anyone is having any problems then to make sure they are using the correct library version
 if (Gdip_LibrarySubVersion() < 1.50)
@@ -39,7 +39,7 @@ WAHeight := WABottom- WATop
 ;AHK v1
 ;Gui, 1: -Caption +E0x80000 +LastFound +OwnDialogs +Owner
 ;Gui, 1: Show, NA
-Gui1 := GuiCreate("-Caption +E0x80000 +LastFound +OwnDialogs +Owner")
+Gui1 := Gui("-Caption +E0x80000 +LastFound +OwnDialogs +Owner")
 Gui1.Show("NA")
 
 ; Get a handle to this window

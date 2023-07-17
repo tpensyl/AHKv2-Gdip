@@ -16,7 +16,7 @@ If !pToken := Gdip_Startup()
 	MsgBox "Gdiplus failed to start. Please ensure you have gdiplus on your system"
 	ExitApp
 }
-OnExit("ExitFunc")
+OnExit ExitFunc
 
 ; Gui 1
 ; Create a gui where we can select the file we want to rotate, the angle to rotate it by and whether we want to flip it
@@ -37,7 +37,7 @@ OnExit("ExitFunc")
 ;Gui, 2: -Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs
 ;Gui, 2: Show, NA
 
-Gui1 := GuiCreate("+ToolWindow +AlwaysOnTop")
+Gui1 := Gui("+ToolWindow +AlwaysOnTop")
 Gui1.OnEvent("Close", "Gui_Close")
 Gui1.Add("Edit", "x10 y10 w300 r1 vFile", A_ScriptDir "\MJ.jpg")
 ButtonObj := Gui1.Add("Button", "x+10 yp+0 w75 Default", "Go")
@@ -46,7 +46,7 @@ Gui1.Add("Slider", "x10 y+10 w300 Tooltip vAngle Range0-360", 0)
 Gui1.Add("CheckBox", "x+10 yp+0 vHorizontal", "Flip horizontally")
 Gui1.Add("CheckBox", "x+10 yp+0 vVertical", "Flip vertically")
 Gui1.Show("x0 y0 AutoSize")
-Gui2 := GuiCreate("-Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs")
+Gui2 := Gui("-Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs")
 Gui2.Name := "Holder"
 Gui2.Show("NA")
 
