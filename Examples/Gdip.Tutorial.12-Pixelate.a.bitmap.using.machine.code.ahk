@@ -53,9 +53,7 @@ OnMessage(0x201, WM_LBUTTONDOWN)
 UpdateLayeredWindow(hwnd1, hdc, (A_ScreenWidth-Width)//2, (A_ScreenHeight-Height)//2, Width, Height)
 
 ; Set a timer to update the gui with our pixelated bitmap
-;AHK v1
-;SetTimer, Update, 50
-SetTimer "Update", 50
+SetTimer Update, 50
 return
 
 ;#######################################################################

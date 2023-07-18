@@ -55,9 +55,7 @@ G := Gdip_GraphicsFromHDC(hdc)
 Gdip_SetSmoothingMode(G, 4)
 
 ; Set a timer to draw a new ellipse every 200ms
-;AHK v1
-;SetTimer DrawCircle, 200
-SetTimer "DrawCircle", 200
+SetTimer DrawCircle, 200
 Return
 
 ;#######################################################################

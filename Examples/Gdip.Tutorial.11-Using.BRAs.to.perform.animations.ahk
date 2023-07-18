@@ -181,11 +181,8 @@ UpdateLayeredWindow(hwnd1, hdc, (WAWidth-WinWidth)//2, (WAHeight-WinHeight)//2, 
 ; UpdateTime to draw the time onto the gui
 ; Play to change the image for the fish video
 UpdateTime()
-;AHK v1
-;SetTimer, UpdateTime, 950
-;SetTimer, Play, 70
-SetTimer "UpdateTime", 950
-SetTimer "Play", 70
+SetTimer UpdateTime, 950
+SetTimer Play, 70
 return
 
 ;######################################################################
