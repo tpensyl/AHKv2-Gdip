@@ -38,9 +38,9 @@ OnExit ExitFunc
 ;Gui, 1: Show, AutoSize, Example 9 - gdi+ progress bar
 
 Gui1 := Gui("-DPIScale")
-Gui1.OnEvent("Close", "Gui_Close")
+Gui1.OnEvent("Close", Gui_Close)
 SliderObj := Gui1.Add("Slider", "x10 y10 w400 Range0-100 vPercentage Tooltip", 50)
-SliderObj.OnEvent("Change", "Slider_Change")
+SliderObj.OnEvent("Change", Slider_Change)
 PictureObj := Gui1.Add("Picture", "x10 y+30 w400 h50 0xE vProgressBar")
 Gdip_SetProgress(PictureObj, 50, 0xff0993ea, 0xffbde5ff, "50`%")
 Gui1.Title := "Example 9 - gdi+ progress bar"

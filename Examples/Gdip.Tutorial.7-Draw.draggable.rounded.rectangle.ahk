@@ -63,7 +63,7 @@ Gdip_DeleteBrush(pBrush)
 UpdateLayeredWindow(hwnd1, hdc, (A_ScreenWidth-Width)//2, (A_ScreenHeight-Height)//2, Width, Height)
 
 ; By placing this OnMessage here. The function WM_LBUTTONDOWN will be called every time the user left clicks on the gui
-OnMessage(0x201, "WM_LBUTTONDOWN")
+OnMessage(0x201, WM_LBUTTONDOWN)
 
 
 ; Select the object back into the hdc

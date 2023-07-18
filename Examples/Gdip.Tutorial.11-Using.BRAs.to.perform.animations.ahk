@@ -171,7 +171,7 @@ Gdip_DisposeImage(pBitmap)
 Index := 0
 
 ; Same as always. On LBUTTONDOWN then run the function to allow dragging of the gui
-OnMessage(0x201, "WM_LBUTTONDOWN")
+OnMessage(0x201, WM_LBUTTONDOWN)
 
 ; Update this all onto the window so that it has a postion on screen
 ; In future we wont need to supply x,y,w,h any more

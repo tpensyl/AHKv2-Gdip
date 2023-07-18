@@ -38,10 +38,10 @@ OnExit ExitFunc
 ;Gui, 2: Show, NA
 
 Gui1 := Gui("+ToolWindow +AlwaysOnTop")
-Gui1.OnEvent("Close", "Gui_Close")
+Gui1.OnEvent("Close", Gui_Close)
 Gui1.Add("Edit", "x10 y10 w300 r1 vFile", A_ScriptDir "\MJ.jpg")
 ButtonObj := Gui1.Add("Button", "x+10 yp+0 w75 Default", "Go")
-ButtonObj.OnEvent("Click", "ButtonGo_Click")
+ButtonObj.OnEvent("Click", ButtonGo_Click)
 Gui1.Add("Slider", "x10 y+10 w300 Tooltip vAngle Range0-360", 0)
 Gui1.Add("CheckBox", "x+10 yp+0 vHorizontal", "Flip horizontally")
 Gui1.Add("CheckBox", "x+10 yp+0 vVertical", "Flip vertically")
@@ -54,7 +54,7 @@ Gui2.Show("NA")
 global hwnd2 := WinExist()
 
 ; By placing this OnMessage here. The function WM_LBUTTONDOWN will be called every time the user left clicks on the gui. This can be used for dragging the image
-OnMessage(0x201, "WM_LBUTTONDOWN")
+OnMessage(0x201, WM_LBUTTONDOWN)
 Return
 
 ;#####################################################################

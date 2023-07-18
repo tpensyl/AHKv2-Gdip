@@ -46,7 +46,7 @@ hbm := CreateDIBSection(Width, Height), hdc := CreateCompatibleDC(), obm := Sele
 G := Gdip_GraphicsFromHDC(hdc)
 
 ; Call WM_LBUTTONDOWN every time the gui is clicked, to allow it to be dragged
-OnMessage(0x201, "WM_LBUTTONDOWN")
+OnMessage(0x201, WM_LBUTTONDOWN)
 
 ; Update the window with the hdc so that it has a position and dimension for future calls to not
 ; have to explicitly pass them
