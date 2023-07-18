@@ -100,14 +100,14 @@ Else
 ; With Gdip_GetRotatedDimensions we can plug in the width and height of the image, and the angle it is to be rotated by
 ; The last 2 parameters are the variables in which tio store the new width and height of the rotated image
 ; RWidth and RHeight now contain the dimensions of the rotated image
-Gdip_GetRotatedDimensions(Width, Height, Angle, RWidth, RHeight)
+Gdip_GetRotatedDimensions(Width, Height, Angle, &RWidth, &RHeight)
 
 ; We rotate an image about the top left corner of the image, however this will result in the image moving off the canvas
 ; We can use Gdip_GetRotatedTranslation to find how much the image should be 'shifted' by in the x and y coordinates in order for it to be back on the canvas
 ; As with the above function, we plug in the width, height and angle to rotate by
 ; The function will then make the last 2 parameters the x and y translation (this is the distance in pixels the image must be shifted by)
 ; xTranslation and yTranslation now contain the distance to shift the image by
-Gdip_GetRotatedTranslation(Width, Height, Angle, xTranslation, yTranslation)
+Gdip_GetRotatedTranslation(Width, Height, Angle, &xTranslation, &yTranslation)
 
 ; We will now create a gdi bitmap to display the rotated image on the screen (as mentioned previously we must use a gdi bitmap to display things on the screen)
 hbm := CreateDIBSection(RWidth, RHeight)

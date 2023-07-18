@@ -50,13 +50,6 @@ Return
 ;#######################################################################
 
 ; This subroutine is activated every time we move the slider as I used gSlider in the options of the slider
-;AHK v1
-;Slider:
-;	Gui, 1: Default
-;	Gui, 1: Submit, NoHide
-;	Gdip_SetProgress(ProgressBar, Percentage, 0xff0993ea, 0xffbde5ff, Percentage "`%")
-;Return
-
 Slider_Change(GuiCtrlObj, Info)
 {
 	Gdip_SetProgress(GuiCtrlObj.Gui["ProgressBar"], GuiCtrlObj.Value, 0xff0993ea, 0xffbde5ff, GuiCtrlObj.Value "`%")
@@ -64,17 +57,12 @@ Slider_Change(GuiCtrlObj, Info)
 
 ;#######################################################################
 
-Gdip_SetProgress(&Variable, Percentage, Foreground, Background:=0x00000000, Text:="", TextOptions:="x0p y15p s60p Center cff000000 r4 Bold", Font:="Arial")
+Gdip_SetProgress(GuiCtrl, Percentage, Foreground, Background:=0x00000000, Text:="", TextOptions:="x0p y15p s60p Center cff000000 r4 Bold", Font:="Arial")
 {
 	; We first want the hwnd (handle to the picture control) so that we know where to put the bitmap we create
 	; We also want to width and height (posw and Posh)
-
-	;AHK v1
-	;GuiControlGet, Pos, Pos, Variable
-	;GuiControlGet, hwnd, hwnd, Variable
-	Posw := Variable.Pos.w
-	Posh := Variable.Pos.h
-	hwnd := Variable.hwnd
+	GuiCtrl.GetPos(&X, &Y, &Posw, &Posh)
+	hwnd := GuiCtrl.Hwnd
 
 	; Create 2 brushes, one for the background and one for the foreground. Remember this is in ARGB
 	pBrushFront := Gdip_BrushCreateSolid(Foreground), pBrushBack := Gdip_BrushCreateSolid(Background)
