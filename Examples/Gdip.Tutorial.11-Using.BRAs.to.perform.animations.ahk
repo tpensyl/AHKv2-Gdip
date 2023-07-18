@@ -76,7 +76,7 @@ FileObject.Close()
 ImageCount := BRA_GetCount(BRA)
 
 ; Built into the Gdip library is the ability to directly get a pointer to a bitmap from a BRA
-; Gdip_BitmapFromBRA(ByRef BRAFromMemIn, File, Alternate=0)
+; Gdip_BitmapFromBRA(&BRAFromMemIn, File, Alternate=0)
 ; The 1st parameter is the BRA in memory from FileObject.RawRead()
 ; The 2nd parameter is the name of the file you wish to get a bitmap for
 ; If the 3rd parameter is true (as it is here) then the name (2nd parameter) doesn't go by file name, but instead by file number
@@ -237,7 +237,7 @@ return
 
 ;######################################################################
 
-BRA_GetCount(ByRef BRAFromMemIn) {
+BRA_GetCount(&BRAFromMemIn) {
 	If !(BRAFromMemIn)
 		Return -1
 	Headers := StrSplit(StrGet(&BRAFromMemIn, 256, "CP0"), "`n")

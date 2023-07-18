@@ -39,8 +39,8 @@
 ; StretchBlt(dDC, dx, dy, dw, dh, sDC, sx, sy, sw, sh, Raster:="")
 ; SetImage(hwnd, hBitmap)
 ; Gdip_BitmapFromScreen(Screen:=0, Raster:="")
-; CreateRectF(ByRef RectF, x, y, w, h)
-; CreateSizeF(ByRef SizeF, w, h)
+; CreateRectF(&RectF, x, y, w, h)
+; CreateSizeF(&SizeF, w, h)
 ; CreateDIBSection
 ;
 ;#####################################################################################

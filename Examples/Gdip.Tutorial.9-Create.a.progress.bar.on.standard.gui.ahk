@@ -64,7 +64,7 @@ Slider_Change(GuiCtrlObj, Info)
 
 ;#######################################################################
 
-Gdip_SetProgress(ByRef Variable, Percentage, Foreground, Background:=0x00000000, Text:="", TextOptions:="x0p y15p s60p Center cff000000 r4 Bold", Font:="Arial")
+Gdip_SetProgress(&Variable, Percentage, Foreground, Background:=0x00000000, Text:="", TextOptions:="x0p y15p s60p Center cff000000 r4 Bold", Font:="Arial")
 {
 	; We first want the hwnd (handle to the picture control) so that we know where to put the bitmap we create
 	; We also want to width and height (posw and Posh)
