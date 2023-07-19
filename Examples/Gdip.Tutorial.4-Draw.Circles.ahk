@@ -68,17 +68,6 @@ global
 DrawCircle:
 ; Get a random colour for the background and foreground of hatch style used to fill the ellipse,
 ; as well as random brush style, x and y coordinates and width/height
-
-/*
-;AHK v1
-Random, RandBackColour, 0.0, 0xffffffff
-Random, RandForeColour, 0.0, 0xffffffff
-Random, RandBrush, 0, 53
-Random, RandElipseWidth, 1, 200
-Random, RandElipseHeight, 1, 200
-Random, RandElipsexPos, %WALeft%, % WAWidth-RandElipseWidth
-Random, RandElipseyPos, %WATop%, % WAHeight-RandElipseHeight
-*/
 RandBackColour := Random(0.0, 0xffffffff)
 RandForeColour := Random(0.0, 0xffffffff)
 RandBrush := Random(0, 53)

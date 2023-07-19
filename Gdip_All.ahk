@@ -2985,13 +2985,11 @@ GetPrimaryMonitor()
 ; Enumerates display monitors and returns an object containing the properties of all monitors or the specified monitor.
 ; ======================================================================================================================
 MDMF_Enum(HMON := "") {
-	static CallbackFunc := Func("CallbackCreate")
-	static EnumProc := CallbackFunc.Call("MDMF_EnumProc")
-	static Obj := "Map"
-	static Monitors := {}
+	static EnumProc := CallbackCreate(MDMF_EnumProc)
+	static Monitors := Map()
 
 	if (HMON = "") { 	; new enumeration
-		Monitors := %Obj%("TotalCount", 0)
+		Monitors := Map("TotalCount", 0)
 		if !DllCall("User32.dll\EnumDisplayMonitors", "Ptr", 0, "Ptr", 0, "Ptr", EnumProc, "Ptr", ObjPtr(Monitors), "Int")
 			return False
 	}
@@ -3002,7 +3000,8 @@ MDMF_Enum(HMON := "") {
 ;  Callback function that is called by the MDMF_Enum function.
 ; ======================================================================================================================
 MDMF_EnumProc(HMON, HDC, PRECT, ObjectAddr) {
-	Monitors := Object(ObjectAddr)
+	Monitors := ObjFromPtrAddRef(ObjectAddr)
+
 	Monitors[HMON] := MDMF_GetInfo(HMON)
 	Monitors["TotalCount"]++
 	if (Monitors[HMON].Primary) {
