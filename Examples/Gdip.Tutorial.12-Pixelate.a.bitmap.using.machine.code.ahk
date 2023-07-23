@@ -16,13 +16,13 @@ If !pToken := Gdip_Startup()
    MsgBox "Gdiplus failed to start. Please ensure you have gdiplus on your system"
    ExitApp
 }
-OnExit("ExitFunc")
+OnExit ExitFunc
 
 ; Create a layered window that is always on top as usual and get a handle to the window
 ;AHK v1
 ;Gui, 1: -Caption +E0x80000 +LastFound +OwnDialogs +Owner +AlwaysOnTop
 ;Gui, 1: Show, NA
-Gui1 := GuiCreate("-Caption +E0x80000 +LastFound +OwnDialogs +Owner +AlwaysOnTop")
+Gui1 := Gui("-Caption +E0x80000 +LastFound +OwnDialogs +Owner +AlwaysOnTop")
 Gui1.Show("NA")
 hwnd1 := WinExist()
 
@@ -46,16 +46,14 @@ hbm := CreateDIBSection(Width, Height), hdc := CreateCompatibleDC(), obm := Sele
 G := Gdip_GraphicsFromHDC(hdc)
 
 ; Call WM_LBUTTONDOWN every time the gui is clicked, to allow it to be dragged
-OnMessage(0x201, "WM_LBUTTONDOWN")
+OnMessage(0x201, WM_LBUTTONDOWN)
 
 ; Update the window with the hdc so that it has a position and dimension for future calls to not
 ; have to explicitly pass them
 UpdateLayeredWindow(hwnd1, hdc, (A_ScreenWidth-Width)//2, (A_ScreenHeight-Height)//2, Width, Height)
 
 ; Set a timer to update the gui with our pixelated bitmap
-;AHK v1
-;SetTimer, Update, 50
-SetTimer "Update", 50
+SetTimer Update, 50
 return
 
 ;#######################################################################

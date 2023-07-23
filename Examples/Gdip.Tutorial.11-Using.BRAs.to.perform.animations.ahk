@@ -17,7 +17,7 @@ If !pToken := Gdip_Startup()
 }
 ; On exiting the program we will go to Exit subroutine to clean up any resources
 ; OnExit, Exit
-OnExit("AppExit")  ; Requires [v1.1.20+]
+OnExit AppExit
 
 ; I've added a simple new function here, just to ensure if anyone is having any problems then to make sure they are using the correct library version
 if (Gdip_LibrarySubVersion() < 1.50)
@@ -39,7 +39,7 @@ WAHeight := WABottom- WATop
 ;AHK v1
 ;Gui, 1: -Caption +E0x80000 +LastFound +OwnDialogs +Owner
 ;Gui, 1: Show, NA
-Gui1 := GuiCreate("-Caption +E0x80000 +LastFound +OwnDialogs +Owner")
+Gui1 := Gui("-Caption +E0x80000 +LastFound +OwnDialogs +Owner")
 Gui1.Show("NA")
 
 ; Get a handle to this window
@@ -76,7 +76,7 @@ FileObject.Close()
 ImageCount := BRA_GetCount(BRA)
 
 ; Built into the Gdip library is the ability to directly get a pointer to a bitmap from a BRA
-; Gdip_BitmapFromBRA(ByRef BRAFromMemIn, File, Alternate=0)
+; Gdip_BitmapFromBRA(&BRAFromMemIn, File, Alternate=0)
 ; The 1st parameter is the BRA in memory from FileObject.RawRead()
 ; The 2nd parameter is the name of the file you wish to get a bitmap for
 ; If the 3rd parameter is true (as it is here) then the name (2nd parameter) doesn't go by file name, but instead by file number
@@ -171,7 +171,7 @@ Gdip_DisposeImage(pBitmap)
 Index := 0
 
 ; Same as always. On LBUTTONDOWN then run the function to allow dragging of the gui
-OnMessage(0x201, "WM_LBUTTONDOWN")
+OnMessage(0x201, WM_LBUTTONDOWN)
 
 ; Update this all onto the window so that it has a postion on screen
 ; In future we wont need to supply x,y,w,h any more
@@ -181,11 +181,8 @@ UpdateLayeredWindow(hwnd1, hdc, (WAWidth-WinWidth)//2, (WAHeight-WinHeight)//2, 
 ; UpdateTime to draw the time onto the gui
 ; Play to change the image for the fish video
 UpdateTime()
-;AHK v1
-;SetTimer, UpdateTime, 950
-;SetTimer, Play, 70
-SetTimer "UpdateTime", 950
-SetTimer "Play", 70
+SetTimer UpdateTime, 950
+SetTimer Play, 70
 return
 
 ;######################################################################
@@ -237,7 +234,7 @@ return
 
 ;######################################################################
 
-BRA_GetCount(ByRef BRAFromMemIn) {
+BRA_GetCount(&BRAFromMemIn) {
 	If !(BRAFromMemIn)
 		Return -1
 	Headers := StrSplit(StrGet(&BRAFromMemIn, 256, "CP0"), "`n")

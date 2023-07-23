@@ -16,7 +16,7 @@ If !pToken := Gdip_Startup()
 	MsgBox "Gdiplus failed to start. Please ensure you have gdiplus on your system"
 	ExitApp
 }
-OnExit("ExitFunc")
+OnExit ExitFunc
 
 ; Get the dimensions of the primary monitor
 ; these funcs are based off MDMF lib and are now included in the Gdip_All library 
@@ -33,7 +33,7 @@ WAHeight := M.WABottom-M.WATop
 ;AHK v1
 ;Gui, 1: -Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs
 ;Gui, 1: Show, NA
-Gui1 := GuiCreate("-Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs")
+Gui1 := Gui("-Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs")
 Gui1.Show("NA")
 
 ; Get a handle to this window we have created in order to update it later
@@ -55,9 +55,7 @@ G := Gdip_GraphicsFromHDC(hdc)
 Gdip_SetSmoothingMode(G, 4)
 
 ; Set a timer to draw a new ellipse every 200ms
-;AHK v1
-;SetTimer DrawCircle, 200
-SetTimer "DrawCircle", 200
+SetTimer DrawCircle, 200
 Return
 
 ;#######################################################################
@@ -68,17 +66,6 @@ global
 DrawCircle:
 ; Get a random colour for the background and foreground of hatch style used to fill the ellipse,
 ; as well as random brush style, x and y coordinates and width/height
-
-/*
-;AHK v1
-Random, RandBackColour, 0.0, 0xffffffff
-Random, RandForeColour, 0.0, 0xffffffff
-Random, RandBrush, 0, 53
-Random, RandElipseWidth, 1, 200
-Random, RandElipseHeight, 1, 200
-Random, RandElipsexPos, %WALeft%, % WAWidth-RandElipseWidth
-Random, RandElipseyPos, %WATop%, % WAHeight-RandElipseHeight
-*/
 RandBackColour := Random(0.0, 0xffffffff)
 RandForeColour := Random(0.0, 0xffffffff)
 RandBrush := Random(0, 53)

@@ -16,7 +16,7 @@ If !pToken := Gdip_Startup()
 	MsgBox "Gdiplus failed to start. Please ensure you have gdiplus on your system"
 	ExitApp
 }
-OnExit("ExitFunc")
+OnExit ExitFunc
 
 ; Set the width and height we want as our drawing area, to draw everything in. This will be the dimensions of our bitmap
 Width := 300, Height := 200
@@ -26,7 +26,7 @@ Width := 300, Height := 200
 ;Gui, 1: -Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs
 ;Gui, 1: Add, Edit, w%Width% h20 y300 vMeEdit
 ;Gui, 1: Show, NA
-Gui1 := GuiCreate("-Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs")
+Gui1 := Gui("-Caption +E0x80000 +LastFound +AlwaysOnTop +ToolWindow +OwnDialogs")
 Gui1.Add("Edit", "w" Width " h20 y300 vMeEdit", "")
 Gui1.Show("NA")
 
@@ -112,7 +112,7 @@ Gdip_TextToGraphics(G, "Tutorial 8`n`nThank you for trying this example", Option
 UpdateLayeredWindow(hwnd1, hdc, (A_ScreenWidth-Width)//2, (A_ScreenHeight-Height)//2, Width, Height)
 
 ; By placing this OnMessage here. The function WM_LBUTTONDOWN will be called every time the user left clicks on the gui
-OnMessage(0x201, "WM_LBUTTONDOWN")
+OnMessage(0x201, WM_LBUTTONDOWN)
 
 
 ; Select the object back into the hdc

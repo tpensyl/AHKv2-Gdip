@@ -16,7 +16,7 @@ If !pToken := Gdip_Startup()
 	MsgBox "Gdiplus failed to start. Please ensure you have gdiplus on your system"
 	ExitApp
 }
-OnExit("ExitFunc")
+OnExit ExitFunc
 
 ; Before we start there are some design elements we must consider.
 ; We can either make the script faster. Creating the bitmap 1st and just write the new progress bar onto it every time and updating it on the gui
@@ -37,10 +37,10 @@ OnExit("ExitFunc")
 ;GoSub Slider
 ;Gui, 1: Show, AutoSize, Example 9 - gdi+ progress bar
 
-Gui1 := GuiCreate("-DPIScale")
-Gui1.OnEvent("Close", "Gui_Close")
+Gui1 := Gui("-DPIScale")
+Gui1.OnEvent("Close", Gui_Close)
 SliderObj := Gui1.Add("Slider", "x10 y10 w400 Range0-100 vPercentage Tooltip", 50)
-SliderObj.OnEvent("Change", "Slider_Change")
+SliderObj.OnEvent("Change", Slider_Change)
 PictureObj := Gui1.Add("Picture", "x10 y+30 w400 h50 0xE vProgressBar")
 Gdip_SetProgress(PictureObj, 50, 0xff0993ea, 0xffbde5ff, "50`%")
 Gui1.Title := "Example 9 - gdi+ progress bar"
@@ -50,13 +50,6 @@ Return
 ;#######################################################################
 
 ; This subroutine is activated every time we move the slider as I used gSlider in the options of the slider
-;AHK v1
-;Slider:
-;	Gui, 1: Default
-;	Gui, 1: Submit, NoHide
-;	Gdip_SetProgress(ProgressBar, Percentage, 0xff0993ea, 0xffbde5ff, Percentage "`%")
-;Return
-
 Slider_Change(GuiCtrlObj, Info)
 {
 	Gdip_SetProgress(GuiCtrlObj.Gui["ProgressBar"], GuiCtrlObj.Value, 0xff0993ea, 0xffbde5ff, GuiCtrlObj.Value "`%")
@@ -64,17 +57,12 @@ Slider_Change(GuiCtrlObj, Info)
 
 ;#######################################################################
 
-Gdip_SetProgress(ByRef Variable, Percentage, Foreground, Background:=0x00000000, Text:="", TextOptions:="x0p y15p s60p Center cff000000 r4 Bold", Font:="Arial")
+Gdip_SetProgress(GuiCtrl, Percentage, Foreground, Background:=0x00000000, Text:="", TextOptions:="x0p y15p s60p Center cff000000 r4 Bold", Font:="Arial")
 {
 	; We first want the hwnd (handle to the picture control) so that we know where to put the bitmap we create
 	; We also want to width and height (posw and Posh)
-
-	;AHK v1
-	;GuiControlGet, Pos, Pos, Variable
-	;GuiControlGet, hwnd, hwnd, Variable
-	Posw := Variable.Pos.w
-	Posh := Variable.Pos.h
-	hwnd := Variable.hwnd
+	GuiCtrl.GetPos(&X, &Y, &Posw, &Posh)
+	hwnd := GuiCtrl.Hwnd
 
 	; Create 2 brushes, one for the background and one for the foreground. Remember this is in ARGB
 	pBrushFront := Gdip_BrushCreateSolid(Foreground), pBrushBack := Gdip_BrushCreateSolid(Background)
