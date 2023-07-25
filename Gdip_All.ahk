@@ -2812,7 +2812,7 @@ Gdip_PixelateBitmap(pBitmap, &pBitmapOut, BlockSize)
 		nCount := StrLen(MCode_PixelateBitmap)//2
 		loop nCount
 			NumPut("UChar", "0x" SubStr(MCode_PixelateBitmap, (2*A_Index)-1, 2), PixelateBitmap, A_Index-1)
-		DllCall("VirtualProtect", "UPtr", PixelateBitmap.Ptr, "UPtr", PixelateBitmap, "UInt", 0x40, "UPtr*", 0)
+		DllCall("VirtualProtect", "UPtr", PixelateBitmap.Ptr, "UPtr", PixelateBitmap.Size, "UInt", 0x40, "UPtr*", 0)
 	}
 
 	Gdip_GetImageDimensions(pBitmap, &Width:="", &Height:="")
